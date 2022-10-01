@@ -13,17 +13,22 @@ namespace ShaderTextRestorer.Handlers
 		public static bool TryDisassemble(byte[] data, out string disassemblyText)
 		{
 			if (data == null)
+			{
 				throw new ArgumentNullException(nameof(data));
+			}
+
 			if (data.Length == 0)
+			{
 				throw new ArgumentException("inputData cannot have zero length");
+			}
 
 			try
 			{
-				var programType = GetProgramType(data);
+				DXProgramType programType = GetProgramType(data);
 				switch (programType)
 				{
 					case DXProgramType.DXBC:
-						var container = new BytecodeContainer(data);
+						BytecodeContainer container = new BytecodeContainer(data);
 						disassemblyText = container.ToString();
 						return !string.IsNullOrEmpty(disassemblyText);
 					case DXProgramType.DX9:
@@ -31,7 +36,7 @@ namespace ShaderTextRestorer.Handlers
 						return !string.IsNullOrEmpty(disassemblyText);
 				}
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Logger.Error(LogCategory.Export, $"DXDecompilerly threw an exception while attempting to disassemble a shader");
 				Logger.Verbose(LogCategory.Export, ex.ToString());
@@ -45,13 +50,18 @@ namespace ShaderTextRestorer.Handlers
 		public static bool TryDecompile(byte[] data, out string decompiledText)
 		{
 			if (data == null)
+			{
 				throw new ArgumentNullException(nameof(data));
+			}
+
 			if (data.Length == 0)
+			{
 				throw new ArgumentException("inputData cannot have zero length");
+			}
 
 			try
 			{
-				var programType = GetProgramType(data);
+				DXProgramType programType = GetProgramType(data);
 				switch (programType)
 				{
 					case DXProgramType.DXBC:
@@ -89,7 +99,7 @@ namespace ShaderTextRestorer.Handlers
 			{
 				return DXProgramType.DXBC;
 			}
-			var dx9ShaderType = (DXDecompiler.DX9Shader.ShaderType)BitConverter.ToUInt16(data, 2);
+			DXDecompiler.DX9Shader.ShaderType dx9ShaderType = (DXDecompiler.DX9Shader.ShaderType)BitConverter.ToUInt16(data, 2);
 			if (dx9ShaderType == DXDecompiler.DX9Shader.ShaderType.Vertex ||
 				dx9ShaderType == DXDecompiler.DX9Shader.ShaderType.Pixel ||
 				dx9ShaderType == DXDecompiler.DX9Shader.ShaderType.Effect)
@@ -102,9 +112,15 @@ namespace ShaderTextRestorer.Handlers
 		private static byte[] GetRelevantData(byte[] bytes, int offset)
 		{
 			if (bytes == null)
+			{
 				throw new ArgumentNullException(nameof(bytes));
+			}
+
 			if (offset < 0 || offset > bytes.Length)
+			{
 				throw new ArgumentOutOfRangeException(nameof(offset));
+			}
+
 			int size = bytes.Length - offset;
 			byte[] result = new byte[size];
 			for (int i = 0; i < size; i++)

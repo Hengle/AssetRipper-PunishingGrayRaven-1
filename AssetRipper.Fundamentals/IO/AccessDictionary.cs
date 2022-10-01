@@ -9,9 +9,11 @@ namespace AssetRipper.Core.IO
 	/// <typeparam name="TValueBase">The exposed value type, such as an interface</typeparam>
 	/// <typeparam name="TKey">The key type of the reference dictionary</typeparam>
 	/// <typeparam name="TValue">The value type of the reference dictionary</typeparam>
-	public sealed class AccessDictionary<TKey, TValue, TKeyBase, TValueBase> : AccessDictionaryBase<TKeyBase, TValueBase> 
-		where TKey : TKeyBase, new()
-		where TValue : TValueBase, new()
+	public sealed class AccessDictionary<TKey, TValue, TKeyBase, TValueBase> : AccessDictionaryBase<TKeyBase, TValueBase>
+		where TKeyBase : notnull
+		where TValueBase : notnull
+		where TKey : notnull, TKeyBase, new()
+		where TValue : notnull, TValueBase, new()
 	{
 		private readonly AssetDictionary<TKey, TValue> referenceDictionary;
 
@@ -72,12 +74,16 @@ namespace AssetRipper.Core.IO
 		public override void CopyTo(NullableKeyValuePair<TKeyBase, TValueBase>[] array, int arrayIndex)
 		{
 			if (array == null)
+			{
 				throw new ArgumentNullException(nameof(array));
+			}
 
 			if (arrayIndex < 0 || arrayIndex >= array.Length - Count)
+			{
 				throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+			}
 
-			for(int i = 0; i < Count; i++)
+			for (int i = 0; i < Count; i++)
 			{
 				array[i + arrayIndex] = GetPair(i);
 			}
@@ -99,7 +105,7 @@ namespace AssetRipper.Core.IO
 			for (int i = Count - 1; i > -1; i--)
 			{
 				NullableKeyValuePair<TKey, TValue> p = referenceDictionary.GetPair(i);
-				if (p.Key is not null && p.Key.GetHashCode() == hash && key.Equals(p.Key))
+				if (p.Key.GetHashCode() == hash && key.Equals(p.Key))
 				{
 					if (found)
 					{

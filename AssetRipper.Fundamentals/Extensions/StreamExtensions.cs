@@ -11,9 +11,7 @@ namespace AssetRipper.Core.Extensions
 				int read = _this.Read(buffer, offset, count);
 				if (read == 0)
 				{
-					buffer = Array.Empty<byte>();
-					break;
-					//throw new Exception($"No data left");
+					throw new Exception($"No data left");
 				}
 				offset += read;
 				count -= read;

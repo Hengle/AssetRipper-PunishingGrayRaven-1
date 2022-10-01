@@ -1,9 +1,9 @@
 ﻿using AssetRipper.Core.IO.Asset;
-using AssetRipper.Core.IO.Endian;
 using AssetRipper.Core.IO.Extensions;
 using AssetRipper.Core.Parser.Files.BundleFile.IO;
 using AssetRipper.Core.Parser.Files.SerializedFiles.IO;
 using AssetRipper.Core.Project;
+using AssetRipper.IO.Endian;
 using AssetRipper.Yaml;
 using System.Diagnostics.CodeAnalysis;
 
@@ -26,9 +26,15 @@ namespace AssetRipper.Core.Classes.Misc
 		public Hash128(byte[] data)
 		{
 			if (data == null)
+			{
 				throw new ArgumentNullException(nameof(data));
+			}
+
 			if (data.Length != 16)
+			{
 				throw new ArgumentException("Length must be exactly 16", nameof(data));
+			}
+
 			Data0 = BitConverter.ToUInt32(data, 0);
 			Data1 = BitConverter.ToUInt32(data, 4);
 			Data2 = BitConverter.ToUInt32(data, 8);
@@ -115,17 +121,21 @@ namespace AssetRipper.Core.Classes.Misc
 			return node;
 		}
 
-		public override bool Equals([NotNullWhen(true)] object obj)
+		public override bool Equals([NotNullWhen(true)] object? obj)
 		{
 			if (obj is Hash128 hash)
+			{
 				return Equals(hash);
+			}
 			else
+			{
 				return false;
+			}
 		}
 
-		public bool Equals(Hash128 other)
+		public bool Equals(Hash128? other)
 		{
-			return this.Data0 == other.Data0 && this.Data1 == other.Data1 && this.Data2 == other.Data2 && this.Data3 == other.Data3;
+			return other is not null && this.Data0 == other.Data0 && this.Data1 == other.Data1 && this.Data2 == other.Data2 && this.Data3 == other.Data3;
 		}
 
 		public static bool operator ==(Hash128 left, Hash128 right) => left.Equals(right);
@@ -134,21 +144,12 @@ namespace AssetRipper.Core.Classes.Misc
 
 		public override int GetHashCode()
 		{
-			int hash = 311;
-			unchecked
-			{
-				hash = hash + 709 * Data0.GetHashCode();
-				hash = hash * 443 + Data1.GetHashCode();
-				hash = hash * 269 + Data2.GetHashCode();
-				hash = hash * 653 + Data3.GetHashCode();
-			}
-			return hash;
+			return HashCode.Combine(Data0, Data1, Data2, Data3);
 		}
 
 		public override string ToString()
 		{
-			UnityGUID guid = new UnityGUID(Data0, Data1, Data2, Data3);
-			return guid.ToString();
+			return new UnityGUID(Data0, Data1, Data2, Data3).ToString();
 		}
 
 		public uint Data0 { get; set; }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 namespace AssetRipper.Core.IO
 {
 	public abstract class AccessListBase<T> : IList<T>, IReadOnlyList<T>
+		where T : notnull
 	{
 		/// <inheritdoc/>
 		public abstract T this[int index] { get; set; }

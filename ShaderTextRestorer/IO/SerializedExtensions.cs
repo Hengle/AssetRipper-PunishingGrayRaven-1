@@ -1,7 +1,6 @@
 ﻿using AssetRipper.Core.Classes.Shader.Enums;
 using AssetRipper.Core.Classes.Shader.Enums.GpuProgramType;
 using AssetRipper.Core.Classes.Shader.SerializedShader.Enum;
-using AssetRipper.Core.Classes.ShaderBlob;
 using AssetRipper.Core.Extensions;
 using AssetRipper.Core.SourceGenExtensions;
 using AssetRipper.SourceGenerated.Subclasses.SerializedPass;
@@ -16,6 +15,7 @@ using AssetRipper.SourceGenerated.Subclasses.SerializedSubProgram;
 using AssetRipper.SourceGenerated.Subclasses.SerializedSubShader;
 using AssetRipper.SourceGenerated.Subclasses.SerializedTagMap;
 using AssetRipper.SourceGenerated.Subclasses.Utf8String;
+using ShaderTextRestorer.ShaderBlob;
 using System;
 using System.Globalization;
 using System.IO;
@@ -150,7 +150,7 @@ namespace ShaderTextRestorer.IO
 			}
 
 			writer.Write("{0} (\"{1}\", ", _this.NameString, _this.Description);
-			
+
 			switch ((SerializedPropertyType)_this.Type)
 			{
 				case SerializedPropertyType.Color:
@@ -269,7 +269,7 @@ namespace ShaderTextRestorer.IO
 				{
 					writer.Write("{0} ", index);
 				}
-				writer.Write("{0} {1}", _this.SrcBlend, _this.DestBlendValue());
+				writer.Write("{0} {1}", _this.SrcBlendValue(), _this.DestBlendValue());
 				if (!_this.SrcBlendValue().IsOne() || !_this.DestBlendAlphaValue().IsZero())
 				{
 					writer.Write(", {0} {1}", _this.SrcBlendAlphaValue(), _this.DestBlendAlphaValue());
@@ -515,7 +515,7 @@ namespace ShaderTextRestorer.IO
 			{
 				writer.WriteIndent(indent);
 				writer.Write("Tags { ");
-				foreach (var kvp in _this.Tags)
+				foreach (AssetRipper.Core.IO.NullableKeyValuePair<Utf8String, Utf8String> kvp in _this.Tags)
 				{
 					writer.Write("\"{0}\" = \"{1}\" ", kvp.Key, kvp.Value);
 				}
@@ -543,9 +543,13 @@ namespace ShaderTextRestorer.IO
 				writer.WriteIndent(5);
 			}
 
-#warning TODO: convertion (DX to HLSL)
 			ShaderGpuProgramType programType = _this.GetProgramType(writer.Version);
-			writer.Write("\"{0}", programType.ToProgramDataKeyword(writer.Platform, type));
+
+			if (writer.WriteQuotesAroundProgram)
+			{
+				writer.Write("\"{0}", programType.ToProgramDataKeyword(writer.Platform, type));
+			}
+
 			if (_this.ProgramData.Length > 0)
 			{
 				writer.Write("\n");
@@ -553,7 +557,11 @@ namespace ShaderTextRestorer.IO
 
 				writer.WriteShaderData(ref _this);
 			}
-			writer.Write('"');
+
+			if (writer.WriteQuotesAroundProgram)
+			{
+				writer.Write('"');
+			}
 		}
 
 		public static void Export(this ShaderSubProgramBlob _this, ShaderWriter writer, string header)

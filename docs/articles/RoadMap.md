@@ -1,24 +1,15 @@
 # Development Roadmap
 
-## 0.2.1.0
-This release will be primarily focused on cleaning up and refactoring the project.
+## 0.2.5.0
+This release will be primarily focused on dependencies.
 
-* Mesh export - STL, OBJ, FBX, PLY, GLB
-  * Convert Unified Exporter to the new system
-  * Convert GLB Exporter to the new system
-  * Use nuget package?
-* Cleanup legacy code
-  * Move documentation on legacy code to a suitable home
-  * Remove the `Classes` and `Converters` namespaces
-  * Remove any additional legacy code
-  * Merge the common project back into the core project
+* Replace texgenpack with a managed library
+* Overhaul file reading
 
 ## 0.2.X.0
 These releases will likely focus on preparing for the next major milestone.
 
 * Remove native dependencies
-  * Replace ogg and vorbis with managed code
-  * Remove Fmod
   * Port essential texture decoding code to C#
 * Make all dependencies trimmable
 * Nuget feed for source generated code and forked dependencies
@@ -55,11 +46,10 @@ This release will focus on improving the user experience by overhauling the GUI
     * PMX (maybe)
     * DAE (aka Collada)
     * Split combined meshes back into the original set of static meshes
-    * Unified mesh export
+    * Use submeshes for mesh export
   * Script Export
     * Hybrid script export
     * Assembly renaming
-    * Improve script decompilation quality with ILSpy's whole project decompilation method
   * Audio Export
     * WWise audio extraction
   * Shader Export

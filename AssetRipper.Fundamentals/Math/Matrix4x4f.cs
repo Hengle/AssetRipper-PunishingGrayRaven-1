@@ -49,9 +49,14 @@ namespace AssetRipper.Core.Math
 		public Matrix4x4f(float[] values)
 		{
 			if (values == null)
+			{
 				throw new ArgumentNullException(nameof(values));
+			}
+
 			if (values.Length != 16)
+			{
 				throw new ArgumentOutOfRangeException(nameof(values), "There must be exactly sixteen input values for Matrix.");
+			}
 
 			E00 = values[0];
 			E01 = values[1];
@@ -138,9 +143,9 @@ namespace AssetRipper.Core.Math
 
 		public float this[int row, int column]
 		{
-			get => this[row + column * 4];
+			get => this[row + (column * 4)];
 
-			set => this[row + column * 4] = value;
+			set => this[row + (column * 4)] = value;
 		}
 
 		public float this[int index]
@@ -201,17 +206,21 @@ namespace AssetRipper.Core.Math
 			return GetColumn(0).GetHashCode() ^ (GetColumn(1).GetHashCode() << 2) ^ (GetColumn(2).GetHashCode() >> 2) ^ (GetColumn(3).GetHashCode() >> 1);
 		}
 
-		public override bool Equals(object other)
+		public override bool Equals(object? other)
 		{
 			if (other is Matrix4x4f matrix)
+			{
 				return Equals(matrix);
+			}
 			else
+			{
 				return false;
+			}
 		}
 
-		public bool Equals(Matrix4x4f other)
+		public bool Equals(Matrix4x4f? other)
 		{
-			return GetColumn(0).Equals(other.GetColumn(0))
+			return other is not null && GetColumn(0).Equals(other.GetColumn(0))
 				   && GetColumn(1).Equals(other.GetColumn(1))
 				   && GetColumn(2).Equals(other.GetColumn(2))
 				   && GetColumn(3).Equals(other.GetColumn(3));
@@ -244,25 +253,25 @@ namespace AssetRipper.Core.Math
 		public static Matrix4x4f operator *(Matrix4x4f lhs, Matrix4x4f rhs)
 		{
 			Matrix4x4f res = new();
-			res.E00 = lhs.E00 * rhs.E00 + lhs.E10 * rhs.E01 + lhs.E20 * rhs.E02 + lhs.E30 * rhs.E03;
-			res.E10 = lhs.E00 * rhs.E10 + lhs.E10 * rhs.E11 + lhs.E20 * rhs.E12 + lhs.E30 * rhs.E13;
-			res.E20 = lhs.E00 * rhs.E20 + lhs.E10 * rhs.E21 + lhs.E20 * rhs.E22 + lhs.E30 * rhs.E23;
-			res.E30 = lhs.E00 * rhs.E30 + lhs.E10 * rhs.E31 + lhs.E20 * rhs.E32 + lhs.E30 * rhs.E33;
+			res.E00 = (lhs.E00 * rhs.E00) + (lhs.E10 * rhs.E01) + (lhs.E20 * rhs.E02) + (lhs.E30 * rhs.E03);
+			res.E10 = (lhs.E00 * rhs.E10) + (lhs.E10 * rhs.E11) + (lhs.E20 * rhs.E12) + (lhs.E30 * rhs.E13);
+			res.E20 = (lhs.E00 * rhs.E20) + (lhs.E10 * rhs.E21) + (lhs.E20 * rhs.E22) + (lhs.E30 * rhs.E23);
+			res.E30 = (lhs.E00 * rhs.E30) + (lhs.E10 * rhs.E31) + (lhs.E20 * rhs.E32) + (lhs.E30 * rhs.E33);
 
-			res.E01 = lhs.E01 * rhs.E00 + lhs.E11 * rhs.E01 + lhs.E21 * rhs.E02 + lhs.E31 * rhs.E03;
-			res.E11 = lhs.E01 * rhs.E10 + lhs.E11 * rhs.E11 + lhs.E21 * rhs.E12 + lhs.E31 * rhs.E13;
-			res.E21 = lhs.E01 * rhs.E20 + lhs.E11 * rhs.E21 + lhs.E21 * rhs.E22 + lhs.E31 * rhs.E23;
-			res.E31 = lhs.E01 * rhs.E30 + lhs.E11 * rhs.E31 + lhs.E21 * rhs.E32 + lhs.E31 * rhs.E33;
+			res.E01 = (lhs.E01 * rhs.E00) + (lhs.E11 * rhs.E01) + (lhs.E21 * rhs.E02) + (lhs.E31 * rhs.E03);
+			res.E11 = (lhs.E01 * rhs.E10) + (lhs.E11 * rhs.E11) + (lhs.E21 * rhs.E12) + (lhs.E31 * rhs.E13);
+			res.E21 = (lhs.E01 * rhs.E20) + (lhs.E11 * rhs.E21) + (lhs.E21 * rhs.E22) + (lhs.E31 * rhs.E23);
+			res.E31 = (lhs.E01 * rhs.E30) + (lhs.E11 * rhs.E31) + (lhs.E21 * rhs.E32) + (lhs.E31 * rhs.E33);
 
-			res.E02 = lhs.E02 * rhs.E00 + lhs.E12 * rhs.E01 + lhs.E22 * rhs.E02 + lhs.E32 * rhs.E03;
-			res.E12 = lhs.E02 * rhs.E10 + lhs.E12 * rhs.E11 + lhs.E22 * rhs.E12 + lhs.E32 * rhs.E13;
-			res.E22 = lhs.E02 * rhs.E20 + lhs.E12 * rhs.E21 + lhs.E22 * rhs.E22 + lhs.E32 * rhs.E23;
-			res.E32 = lhs.E02 * rhs.E30 + lhs.E12 * rhs.E31 + lhs.E22 * rhs.E32 + lhs.E32 * rhs.E33;
+			res.E02 = (lhs.E02 * rhs.E00) + (lhs.E12 * rhs.E01) + (lhs.E22 * rhs.E02) + (lhs.E32 * rhs.E03);
+			res.E12 = (lhs.E02 * rhs.E10) + (lhs.E12 * rhs.E11) + (lhs.E22 * rhs.E12) + (lhs.E32 * rhs.E13);
+			res.E22 = (lhs.E02 * rhs.E20) + (lhs.E12 * rhs.E21) + (lhs.E22 * rhs.E22) + (lhs.E32 * rhs.E23);
+			res.E32 = (lhs.E02 * rhs.E30) + (lhs.E12 * rhs.E31) + (lhs.E22 * rhs.E32) + (lhs.E32 * rhs.E33);
 
-			res.E03 = lhs.E03 * rhs.E00 + lhs.E13 * rhs.E01 + lhs.E23 * rhs.E02 + lhs.E33 * rhs.E03;
-			res.E13 = lhs.E03 * rhs.E10 + lhs.E13 * rhs.E11 + lhs.E23 * rhs.E12 + lhs.E33 * rhs.E13;
-			res.E23 = lhs.E03 * rhs.E20 + lhs.E13 * rhs.E21 + lhs.E23 * rhs.E22 + lhs.E33 * rhs.E23;
-			res.E33 = lhs.E03 * rhs.E30 + lhs.E13 * rhs.E31 + lhs.E23 * rhs.E32 + lhs.E33 * rhs.E33;
+			res.E03 = (lhs.E03 * rhs.E00) + (lhs.E13 * rhs.E01) + (lhs.E23 * rhs.E02) + (lhs.E33 * rhs.E03);
+			res.E13 = (lhs.E03 * rhs.E10) + (lhs.E13 * rhs.E11) + (lhs.E23 * rhs.E12) + (lhs.E33 * rhs.E13);
+			res.E23 = (lhs.E03 * rhs.E20) + (lhs.E13 * rhs.E21) + (lhs.E23 * rhs.E22) + (lhs.E33 * rhs.E23);
+			res.E33 = (lhs.E03 * rhs.E30) + (lhs.E13 * rhs.E31) + (lhs.E23 * rhs.E32) + (lhs.E33 * rhs.E33);
 
 			return res;
 		}

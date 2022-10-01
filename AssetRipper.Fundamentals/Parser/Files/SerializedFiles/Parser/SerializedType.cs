@@ -4,15 +4,15 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles.Parser
 {
 	public sealed class SerializedType : SerializedTypeBase
 	{
-		public int[] TypeDependencies { get; set; }
+		public int[] TypeDependencies { get; set; } = Array.Empty<int>();
 
 		private static bool HasScriptID(FormatVersion generation, ClassIDType typeID)
 		{
 			//Temporary solution to #296
 			return typeID == ClassIDType.MonoBehaviour;
-				//Previous code:
-				//(generation < FormatVersion.RefactoredClassId && typeID < 0)
-				//|| (generation >= FormatVersion.RefactoredClassId && typeID == ClassIDType.MonoBehaviour);
+			//Previous code:
+			//(generation < FormatVersion.RefactoredClassId && typeID < 0)
+			//|| (generation >= FormatVersion.RefactoredClassId && typeID == ClassIDType.MonoBehaviour);
 		}
 
 		public override void Read(SerializedReader reader, bool hasTypeTree)

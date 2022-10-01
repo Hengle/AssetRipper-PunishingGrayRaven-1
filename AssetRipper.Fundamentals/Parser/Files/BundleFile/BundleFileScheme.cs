@@ -1,5 +1,4 @@
 using AssetRipper.Core.Extensions;
-using AssetRipper.Core.IO.Endian;
 using AssetRipper.Core.IO.Extensions;
 using AssetRipper.Core.IO.Smart;
 using AssetRipper.Core.Parser.Files.BundleFile.Header;
@@ -9,6 +8,7 @@ using AssetRipper.Core.Parser.Files.Entries;
 using AssetRipper.Core.Parser.Files.Schemes;
 using AssetRipper.Core.Structure;
 using AssetRipper.Core.Structure.GameStructure;
+using AssetRipper.IO.Endian;
 using K4os.Compression.LZ4;
 using System.IO;
 
@@ -71,7 +71,7 @@ namespace AssetRipper.Core.Parser.Files.BundleFile
 			Header.Read(reader);
 			if (Header.Signature.IsRawWeb())
 			{
-				if (stream.Position - headerPosition != Header.RawWeb.HeaderSize)
+				if (stream.Position - headerPosition != Header.RawWeb!.HeaderSize)
 				{
 					throw new Exception($"Read {stream.Position - headerPosition} but expected {Header.RawWeb.HeaderSize} bytes while reading the raw/web bundle header.");
 				}
@@ -80,7 +80,7 @@ namespace AssetRipper.Core.Parser.Files.BundleFile
 
 		private void ReadRawWebMetadata(Stream stream, out Stream dataStream, out long metadataOffset)
 		{
-			BundleRawWebHeader header = Header.RawWeb;
+			BundleRawWebHeader header = Header.RawWeb!;
 			int metadataSize = BundleRawWebHeader.HasUncompressedBlocksInfoSize(Header.Version) ? header.UncompressedBlocksInfoSize : 0;
 			switch (Header.Signature)
 			{
@@ -113,12 +113,12 @@ namespace AssetRipper.Core.Parser.Files.BundleFile
 
 		private void ReadFileStreamMetadata(Stream stream, long basePosition)
 		{
-			BundleFileStreamHeader header = Header.FileStream;
-			if (Header.Version >= BundleVersion.BF_Addressables)
+			BundleFileStreamHeader header = Header.FileStream!;
+			if (Header.Version >= BundleVersion.BF_LargeFilesSupport)
 			{
 				stream.Align(16);
 			}
-			if (header.Flags.IsBlocksInfoAtTheEnd())
+			if (header.Flags.GetBlocksInfoAtTheEnd())
 			{
 				stream.Position = basePosition + (header.Size - header.CompressedBlocksInfoSize);
 			}
@@ -192,13 +192,17 @@ namespace AssetRipper.Core.Parser.Files.BundleFile
 
 		private void ReadFileStreamData(Stream stream, long basePosition, long headerSize)
 		{
-			if (Header.FileStream.Flags.IsBlocksInfoAtTheEnd())
+			if (Header.Flags.GetBlocksInfoAtTheEnd())
 			{
 				stream.Position = basePosition + headerSize;
-				if (Header.Version >= BundleVersion.BF_Addressables)
+				if (Header.Version >= BundleVersion.BF_LargeFilesSupport)
 				{
 					stream.Align(16);
 				}
+			}
+			if (Header.Flags.GetAlignAfterBlocksInfo())
+			{
+				stream.Align(16);
 			}
 
 			using BundleFileBlockReader blockReader = new BundleFileBlockReader(stream, Metadata.BlocksInfo);

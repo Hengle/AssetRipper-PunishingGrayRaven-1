@@ -1,5 +1,5 @@
-﻿using AssetRipper.Core.IO.Endian;
-using AssetRipper.Core.Parser.Files.SerializedFiles.IO;
+﻿using AssetRipper.Core.Parser.Files.SerializedFiles.IO;
+using AssetRipper.IO.Endian;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -26,14 +26,15 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles.Parser.TypeTree
 					throw new InvalidDataException($"String buffer size cannot be negative: {stringBufferSize}");
 				}
 
-				Nodes = new List<TypeTreeNode>(nodesCount);
+				Nodes.Clear();
+				Nodes.Capacity = nodesCount;
 				for (int i = 0; i < nodesCount; i++)
 				{
 					TypeTreeNode node = new TypeTreeNode();
 					node.Read(reader);
 					Nodes.Add(node);
 				}
-				if(stringBufferSize == 0)
+				if (stringBufferSize == 0)
 				{
 					StringBuffer = Array.Empty<byte>();
 				}
@@ -46,7 +47,7 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles.Parser.TypeTree
 			else
 			{
 				IsFormat5 = false;
-				Nodes = new List<TypeTreeNode>();
+				Nodes.Clear();
 				ReadTreeNode(reader, Nodes, 0);
 			}
 		}
@@ -57,7 +58,7 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles.Parser.TypeTree
 			{
 				writer.Write(Nodes.Count);
 				writer.Write(StringBuffer.Length);
-				foreach (var node in Nodes)
+				foreach (TypeTreeNode node in Nodes)
 				{
 					node.Write(writer);
 				}
@@ -96,7 +97,7 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles.Parser.TypeTree
 			}
 		}
 
-		public override string ToString()
+		public override string? ToString()
 		{
 			if (Nodes == null)
 			{
@@ -108,7 +109,7 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles.Parser.TypeTree
 
 		public StringBuilder ToString(StringBuilder sb)
 		{
-			if(Nodes != null)
+			if (Nodes != null)
 			{
 				foreach (TypeTreeNode node in Nodes)
 				{
@@ -181,17 +182,19 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles.Parser.TypeTree
 			else
 			{
 				uint offset = value & ~0x80000000;
-				TreeNodeType nodeType = (TreeNodeType)offset;
-				if (!Enum.IsDefined(typeof(TreeNodeType), nodeType))
+				if (CommonString.StringBuffer.TryGetValue(offset, out string? nodeTypeName))
 				{
-					throw new Exception($"Unsupported asset class type name '{nodeType}''");
+					return nodeTypeName;
 				}
-				return nodeType.ToTypeString();
+				else
+				{
+					throw new Exception($"Unsupported asset class type name '{offset}''");
+				}
 			}
 		}
 
-		public List<TypeTreeNode> Nodes { get; set; }
-		public byte[] StringBuffer { get; set; }
+		public List<TypeTreeNode> Nodes { get; } = new();
+		public byte[] StringBuffer { get; set; } = Array.Empty<byte>();
 		/// <summary>
 		/// 5.0.0a1 and greater<br/>
 		/// Generation 10

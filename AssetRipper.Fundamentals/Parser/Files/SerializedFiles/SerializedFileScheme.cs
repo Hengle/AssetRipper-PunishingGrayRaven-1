@@ -1,13 +1,13 @@
 using AssetRipper.Core.Converters.Files;
 using AssetRipper.Core.Extensions;
 using AssetRipper.Core.IO.Asset;
-using AssetRipper.Core.IO.Endian;
 using AssetRipper.Core.IO.Smart;
 using AssetRipper.Core.Parser.Files.Entries;
 using AssetRipper.Core.Parser.Files.Schemes;
 using AssetRipper.Core.Parser.Files.SerializedFiles.Parser;
 using AssetRipper.Core.Parser.Utils;
 using AssetRipper.Core.Structure.GameStructure;
+using AssetRipper.IO.Endian;
 using System.Collections.Generic;
 using System.IO;
 
@@ -61,7 +61,7 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles
 			if (Stream != null)
 			{
 				Stream.Dispose();
-				Stream = null;
+				Stream = null!;
 			}
 		}
 
@@ -96,7 +96,7 @@ namespace AssetRipper.Core.Parser.Files.SerializedFiles
 				}
 			}
 
-			if (FilenameUtils.IsEngineResource(Name) || Header.Version < FormatVersion.Unknown_10 && FilenameUtils.IsBuiltinExtra(Name))
+			if (FilenameUtils.IsEngineResource(Name) || (Header.Version < FormatVersion.Unknown_10 && FilenameUtils.IsBuiltinExtra(Name)))
 			{
 				Flags |= TransferInstructionFlags.IsBuiltinResourcesFile;
 			}

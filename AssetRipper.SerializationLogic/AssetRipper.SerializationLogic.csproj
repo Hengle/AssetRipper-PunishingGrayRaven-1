@@ -4,24 +4,13 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<OutputPath>..\Bins\AssetRipper.SerializationLogic\$(Configuration)\</OutputPath>
-		<IntermediateOutputPath>..\Bins\obj\AssetRipper.SerializationLogic\$(Configuration)\</IntermediateOutputPath>
-		<AssemblyName>AssetRipper.SerializationLogic</AssemblyName>
-		<RootNamespace>AssetRipper.SerializationLogic</RootNamespace>
-		<Copyright>Copyright ©  2022</Copyright>
-		<Authors>ds5678</Authors>
-		<Configurations>Debug;Release</Configurations>
 		<DebugType>embedded</DebugType>
 		<DebugSymbols>true</DebugSymbols>
+		<IsTrimmable>true</IsTrimmable>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Mono.Cecil" Version="0.11.4" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<RuntimeHostConfigurationOption Include="System.Globalization.Invariant" Value="true" />
+		<PackageReference Include="AsmResolver.DotNet" Version="4.11.2" />
 	</ItemGroup>
 
 </Project>

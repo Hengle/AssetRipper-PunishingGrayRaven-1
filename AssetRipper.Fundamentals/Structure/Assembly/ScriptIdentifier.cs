@@ -65,7 +65,7 @@ namespace AssetRipper.Core.Structure.Assembly
 			return false;
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (obj == null)
 			{
@@ -83,14 +83,14 @@ namespace AssetRipper.Core.Structure.Assembly
 			int hash = 317;
 			unchecked
 			{
-				hash = hash + 89 * Assembly.GetHashCode();
-				hash = hash * 79 + Namespace.GetHashCode();
-				hash = hash * 37 + Name.GetHashCode();
+				hash = hash + (89 * Assembly.GetHashCode());
+				hash = (hash * 79) + Namespace.GetHashCode();
+				hash = (hash * 37) + Name.GetHashCode();
 			}
 			return hash;
 		}
 
-		public override string ToString()
+		public override string? ToString()
 		{
 			return IsDefault ? base.ToString() : Namespace == string.Empty ? $"{Name}" : $"{Namespace}.{Name}";
 		}

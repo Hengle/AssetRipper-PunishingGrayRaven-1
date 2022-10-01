@@ -1,14 +1,16 @@
 ﻿using AssetRipper.Core.Classes.Shader.Enums;
 using AssetRipper.Core.Classes.Shader.Enums.GpuProgramType;
-using AssetRipper.Core.Classes.Shader.Parameters;
+using ShaderTextRestorer.ShaderBlob.Parameters;
 using System;
 
 namespace ShaderTextRestorer.ConstantBuffers
 {
 	internal class Variable
 	{
-		private Variable()
+		private Variable(string name, Types.ShaderType shaderType)
 		{
+			Name = name;
+			ShaderType = shaderType;
 		}
 
 		public Variable(MatrixParameter param, ShaderGpuProgramType programType)
@@ -42,10 +44,13 @@ namespace ShaderTextRestorer.ConstantBuffers
 
 		public static Variable CreateDummyVariable(string name, int index, int sizeToAdd, ShaderGpuProgramType programType)
 		{
-			if (sizeToAdd % 4 != 0 || sizeToAdd <= 0) throw new Exception($"Invalid dummy variable size {sizeToAdd}");
+			if (sizeToAdd % 4 != 0 || sizeToAdd <= 0)
+			{
+				throw new Exception($"Invalid dummy variable size {sizeToAdd}");
+			}
 
 			//Constant Buffer indices have a stride of 16 bytes
-			var alignIndex = index % 16;
+			int alignIndex = index % 16;
 			if (alignIndex != 0)
 			{
 				index += 16 - alignIndex;
@@ -53,10 +58,8 @@ namespace ShaderTextRestorer.ConstantBuffers
 			}
 			sizeToAdd -= sizeToAdd % 16;
 
-			Variable variable = new Variable();
-			var param = new VectorParameter(name, ShaderParamType.Float, index, sizeToAdd / 16, 4);
-			variable.ShaderType = new Types.ShaderType(param, programType);
-			variable.Name = name ?? throw new Exception("Variable name cannot be null");
+			VectorParameter param = new VectorParameter(name, ShaderParamType.Float, index, sizeToAdd / 16, 4);
+			Variable variable = new Variable(name, new Types.ShaderType(param, programType));
 			variable.NameIndex = -1;
 			variable.Index = index;
 			variable.ArraySize = param.ArraySize;
@@ -67,10 +70,9 @@ namespace ShaderTextRestorer.ConstantBuffers
 
 		public static Variable CreateResourceBindVariable(ShaderGpuProgramType programType)
 		{
-			Variable variable = new Variable();
-			variable.Name = "$Element";
-			var param = new VectorParameter(variable.Name, ShaderParamType.UInt, 0, 1);
-			variable.ShaderType = new Types.ShaderType(param, programType);
+			string name = "$Element";
+			VectorParameter param = new VectorParameter(name, ShaderParamType.UInt, 0, 1);
+			Variable variable = new Variable(name, new Types.ShaderType(param, programType));
 			variable.NameIndex = -1;
 			variable.Index = 0;
 			variable.ArraySize = param.ArraySize;

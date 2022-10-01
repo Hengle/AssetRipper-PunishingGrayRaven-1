@@ -11,6 +11,8 @@ namespace AssetRipper.Core.IO
 	/// <typeparam name="TKey">The exposed key type, such as an interface, base type, or primitive type</typeparam>
 	/// <typeparam name="TValue">The exposed value type, such as an interface, base type, or primitive type</typeparam>
 	public abstract class AccessDictionaryBase<TKey, TValue> : IEnumerable<NullableKeyValuePair<TKey, TValue>>
+		where TKey : notnull
+		where TValue : notnull
 	{
 		/// <summary>
 		/// The capacity of the dictionary 
@@ -129,7 +131,7 @@ namespace AssetRipper.Core.IO
 		/// <inheritdoc/>
 		public abstract bool Remove(NullableKeyValuePair<TKey, TValue> item);
 
-		protected NullableKeyValuePair<TKey,TValue> GetSinglePairForKey(TKey key)
+		protected NullableKeyValuePair<TKey, TValue> GetSinglePairForKey(TKey key)
 		{
 			if (TryGetSinglePairForKey(key, out NullableKeyValuePair<TKey, TValue>? pair))
 			{
@@ -137,7 +139,7 @@ namespace AssetRipper.Core.IO
 			}
 			else
 			{
-				throw new KeyNotFoundException($"Key not found: {key?.ToString()}");
+				throw new KeyNotFoundException($"Key not found: {key}");
 			}
 		}
 
@@ -152,16 +154,16 @@ namespace AssetRipper.Core.IO
 		/// and could throw exceptions if used improperly.
 		/// Both will throw if the key isn't unique.
 		/// </remarks>
-		public TValue this[TKey key] 
+		public TValue this[TKey key]
 		{
 			get => GetSinglePairForKey(key).Value;
 			set
 			{
-				if(TryGetSinglePairForKey(key, out NullableKeyValuePair<TKey, TValue>? pair))
+				if (TryGetSinglePairForKey(key, out NullableKeyValuePair<TKey, TValue>? pair))
 				{
 					pair.Value = value;
 				}
-				else 
+				else
 				{
 					Add(key, value);
 				}

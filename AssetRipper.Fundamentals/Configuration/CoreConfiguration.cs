@@ -39,7 +39,7 @@ namespace AssetRipper.Core.Configuration
 		/// <summary>
 		/// The root path to export to
 		/// </summary>
-		public string ExportRootPath { get; set; }
+		public string ExportRootPath { get; set; } = "";
 		/// <summary>
 		/// The path to create a new unity project in
 		/// </summary>
@@ -51,15 +51,12 @@ namespace AssetRipper.Core.Configuration
 		/// Should objects get exported with dependencies or without?
 		/// </summary>
 		public bool ExportDependencies { get; set; }
-		/// <summary>
-		/// Export asset bundle content to its original path instead of the Asset_Bundle directory
-		/// </summary>
-		public bool IgnoreAssetBundleContentPaths { get; set; }
+		public BundledAssetsExportMode BundledAssetsExportMode { get; set; }
 		/// <summary>
 		/// A function to determine if an object is allowed to be exported.<br/>
 		/// Set by default to allow everything.
 		/// </summary>
-		public Func<IUnityObjectBase, bool> Filter { get; set; }
+		public Func<IUnityObjectBase, bool> Filter { get; set; } = DefaultFilterMethod;
 		#endregion
 
 		#region Project Settings
@@ -92,7 +89,7 @@ namespace AssetRipper.Core.Configuration
 			StreamingAssetsMode = StreamingAssetsMode.Extract;
 			ExportRootPath = ExecutingDirectory.Combine("Ripped");
 			ExportDependencies = false;
-			IgnoreAssetBundleContentPaths = false;
+			BundledAssetsExportMode = BundledAssetsExportMode.GroupByBundleName;
 			Filter = DefaultFilter;
 		}
 
@@ -103,7 +100,7 @@ namespace AssetRipper.Core.Configuration
 			Logger.Info(LogCategory.General, $"{nameof(StreamingAssetsMode)}: {StreamingAssetsMode}");
 			Logger.Info(LogCategory.General, $"{nameof(ExportRootPath)}: {ExportRootPath}");
 			Logger.Info(LogCategory.General, $"{nameof(ExportDependencies)}: {ExportDependencies}");
-			Logger.Info(LogCategory.General, $"{nameof(IgnoreAssetBundleContentPaths)}: {IgnoreAssetBundleContentPaths}");
+			Logger.Info(LogCategory.General, $"{nameof(BundledAssetsExportMode)}: {BundledAssetsExportMode}");
 		}
 	}
 }

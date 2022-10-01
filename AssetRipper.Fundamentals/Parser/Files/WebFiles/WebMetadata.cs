@@ -1,4 +1,4 @@
-using AssetRipper.Core.IO.Endian;
+using AssetRipper.IO.Endian;
 using System.Collections.Generic;
 
 namespace AssetRipper.Core.Parser.Files.WebFiles
@@ -18,6 +18,6 @@ namespace AssetRipper.Core.Parser.Files.WebFiles
 			Entries = entries.ToArray();
 		}
 
-		public WebFileEntry[] Entries { get; set; }
+		public WebFileEntry[] Entries { get; set; } = Array.Empty<WebFileEntry>();
 	}
 }

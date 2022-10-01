@@ -11,8 +11,8 @@ namespace AssetRipper.Core.Classes.Meta
 		public MetaPtr(long fileID)
 		{
 			FileID = fileID;
-			GUID = new();
-			AssetType = new();
+			GUID = UnityGUID.Zero;
+			AssetType = AssetType.Serialized;
 		}
 
 		public MetaPtr(long fileID, UnityGUID guid, AssetType assetType)
@@ -21,8 +21,6 @@ namespace AssetRipper.Core.Classes.Meta
 			GUID = guid;
 			AssetType = assetType;
 		}
-
-		public MetaPtr(ClassIDType classID, AssetType assetType) : this(ExportIdHandler.GetMainExportID((uint)classID), UnityGUID.MissingReference, assetType) { }
 
 		public YamlNode ExportYaml(IExportContainer container)
 		{
@@ -38,6 +36,11 @@ namespace AssetRipper.Core.Classes.Meta
 		}
 
 		public static MetaPtr NullPtr { get; } = new MetaPtr(0);
+
+		public static MetaPtr CreateMissingReference(ClassIDType classID, AssetType assetType)
+		{
+			return new MetaPtr(ExportIdHandler.GetMainExportID((uint)classID), UnityGUID.MissingReference, assetType);
+		}
 
 		public long FileID { get; }
 		public UnityGUID GUID { get; }

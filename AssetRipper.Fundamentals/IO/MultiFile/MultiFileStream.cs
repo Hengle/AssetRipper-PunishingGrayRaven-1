@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -28,7 +29,7 @@ namespace AssetRipper.Core.IO.MultiFile
 			m_streams = streams.ToArray();
 			if (m_streams.Count == 0)
 			{
-				throw new ArgumentException(nameof(streams));
+				throw new ArgumentException(null, nameof(streams));
 			}
 
 			Length = streams.Sum(t => t.Length);
@@ -67,9 +68,13 @@ namespace AssetRipper.Core.IO.MultiFile
 			{
 				SplitPath(path, out string directory, out string file, true);
 				if (string.IsNullOrEmpty(file))
+				{
 					return false;
+				}
 				else
+				{
 					return Exists(directory, file);
+				}
 			}
 		}
 
@@ -214,7 +219,7 @@ namespace AssetRipper.Core.IO.MultiFile
 		private static void SplitPath(string path, out string directory, out string file) => SplitPath(path, out directory, out file, false);
 		private static void SplitPath(string path, out string directory, out string file, bool allowNullReturn)
 		{
-			directory = Path.GetDirectoryName(path);
+			directory = Path.GetDirectoryName(path) ?? throw new Exception("Could not get directory name");
 			directory = string.IsNullOrEmpty(directory) ? "." : directory;
 			file = Path.GetFileName(path);
 			if (string.IsNullOrEmpty(file) && !allowNullReturn)
@@ -225,7 +230,7 @@ namespace AssetRipper.Core.IO.MultiFile
 
 		private static void SplitPathWithoutExtension(string path, out string directory, out string file)
 		{
-			directory = Path.GetDirectoryName(path);
+			directory = Path.GetDirectoryName(path) ?? throw new Exception("Could not get directory name");
 			directory = string.IsNullOrEmpty(directory) ? "." : directory;
 			file = Path.GetFileNameWithoutExtension(path);
 			if (string.IsNullOrEmpty(file))
@@ -337,6 +342,7 @@ namespace AssetRipper.Core.IO.MultiFile
 			}
 		}
 
+		[MemberNotNull(nameof(m_currentStream))]
 		private void UpdateCurrentStream()
 		{
 			m_currentBegin = 0;
@@ -354,7 +360,7 @@ namespace AssetRipper.Core.IO.MultiFile
 
 				m_currentBegin += m_currentStream.Length;
 			}
-			m_currentBegin -= m_currentStream.Length;
+			m_currentBegin -= m_currentStream!.Length;
 			m_currentStream.Position = m_position - m_currentBegin;
 		}
 
@@ -391,6 +397,9 @@ namespace AssetRipper.Core.IO.MultiFile
 
 		public const string MultifileRegPostfix = @"\.split";
 
+		/// <summary>
+		/// Always has at least one element.
+		/// </summary>
 		private readonly IReadOnlyList<Stream> m_streams;
 
 		private Stream m_currentStream;

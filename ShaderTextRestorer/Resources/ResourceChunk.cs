@@ -1,11 +1,11 @@
-﻿using AssetRipper.Core.IO.Endian;
-using AssetRipper.Core.Classes.Shader.Enums.GpuProgramType;
-using System.Collections.Generic;
-using System.Text;
+﻿using AssetRipper.Core.Classes.Shader.Enums.GpuProgramType;
+using AssetRipper.IO.Endian;
+using AssetRipper.VersionUtilities;
 using ShaderTextRestorer.ConstantBuffers;
 using ShaderTextRestorer.Extensions;
-using AssetRipper.VersionUtilities;
-using AssetRipper.Core.Classes.ShaderBlob;
+using ShaderTextRestorer.ShaderBlob;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ShaderTextRestorer.Resources
 {
@@ -37,7 +37,7 @@ namespace ShaderTextRestorer.Resources
 			writer.Write(minorVersion);
 			writer.Write(m_majorVersion);
 			writer.Write((ushort)m_programType);
-			var flags = ShaderFlags.NoPreshader;
+			ShaderFlags flags = ShaderFlags.NoPreshader;
 			writer.Write((uint)flags);
 			writer.Write(m_creatorStringOffset);
 			if (m_majorVersion >= 5)

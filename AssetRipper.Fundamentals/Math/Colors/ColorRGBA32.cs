@@ -11,7 +11,7 @@ namespace AssetRipper.Core.Math.Colors
 
 		public ColorRGBA32(byte r, byte g, byte b, byte a)
 		{
-			Rgba = unchecked((uint)(r | g << 8 | b << 16 | a << 24));
+			Rgba = unchecked((uint)(r | (g << 8) | (b << 16) | (a << 24)));
 		}
 
 		public static explicit operator ColorRGBA32(ColorRGBAf color)
@@ -25,10 +25,22 @@ namespace AssetRipper.Core.Math.Colors
 
 		private static byte ConvertFloatToByte(float value)
 		{
-			if (float.IsNaN(value)) return byte.MinValue;
+			if (float.IsNaN(value))
+			{
+				return byte.MinValue;
+			}
+
 			float scaledValue = value * 255.0f;
-			if (scaledValue <= 0f) return byte.MinValue;
-			if (scaledValue >= 255f) return byte.MaxValue;
+			if (scaledValue <= 0f)
+			{
+				return byte.MinValue;
+			}
+
+			if (scaledValue >= 255f)
+			{
+				return byte.MaxValue;
+			}
+
 			return (byte)scaledValue;
 		}
 
