@@ -200,10 +200,12 @@ namespace AssetRipper.Core.Parser.Files.BundleFile
 					stream.Align(16);
 				}
 			}
-			if (Header.Flags.GetAlignAfterBlocksInfo())
+			/*
+            if (Header.Flags.GetAlignAfterBlocksInfo())
 			{
 				stream.Align(16);
 			}
+			*/
 
 			using BundleFileBlockReader blockReader = new BundleFileBlockReader(stream, Metadata.BlocksInfo);
 			foreach (Node entry in Metadata.DirectoryInfo.Nodes)

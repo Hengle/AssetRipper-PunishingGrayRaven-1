@@ -1,4 +1,5 @@
 ﻿using AssetRipper.Core.Parser.Files.BundleFile.Parser;
+using AssetRipper.Core.Utils;
 using AssetRipper.IO.Endian;
 
 namespace AssetRipper.Core.Parser.Files.BundleFile.Header
@@ -11,6 +12,10 @@ namespace AssetRipper.Core.Parser.Files.BundleFile.Header
 			CompressedBlocksInfoSize = reader.ReadInt32();
 			UncompressedBlocksInfoSize = reader.ReadInt32();
 			Flags = (BundleFlags)reader.ReadInt32();
+			if (!Flags.GetBlocksInfoAtTheEnd())
+			{
+				PGR.Instance = new PGR(reader);
+			}
 		}
 
 		/// <summary>
